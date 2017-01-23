@@ -1,0 +1,187 @@
+%%%%%%%%%%%%%%%%%%%%%%
+%% Template adapted from: 
+%% https://www.overleaf.com/latex/examples/introduction-to-electrical-engineering-example-assignment-template/pqvbrbjtjcqq#.WH72rTXWBC0
+%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt,a4paper,titlepage]{article}
+\usepackage[a4paper]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{booktabs}
+
+\usepackage{amsmath, amssymb, amsfonts, amsthm, mathtools}
+%\usepackage{microtype} %improves the spacing between words and letters
+
+\usepackage{graphicx}
+
+
+% ------------------------------------------------
+%% COLOR DEFINITIONS
+% ------------------------------------------------
+\usepackage[svgnames]{xcolor} % Enabling mixing colors and color's call by 'svgnames'
+% ------------------------------------------------
+\definecolor{MyBlue}{rgb}{0.2,0.4,0.6} %mix personal color
+\newcommand{\textb}{\color{Black} \usefont{OT1}{lmss}{m}{n}}
+\newcommand{\blue}{\color{MyBlue} \usefont{OT1}{lmss}{m}{n}}
+\newcommand{\blueb}{\color{MyBlue} \usefont{OT1}{lmss}{b}{n}}
+% ------------------------------------------------
+
+
+% ------------------------------------------------
+%% FONTS AND COLORS
+% ------------------------------------------------
+\usepackage{sectsty}
+%set section/subsections HEADINGS font and color
+\sectionfont{\color{MyBlue}}  % sets colour of sections
+\subsectionfont{\color{MyBlue}}  % sets colour of sections
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=true}
+
+% ------------------------------------------------
+%% TITLE
+% ------------------------------------------------
+\title{\blue CS 753: Automatic Speech Recognition \\
+\blueb Assignment 1 (Part 1)}
+\author{John C F\\
+ \small 14305R006}
+\date{\today}
+% ------------------------------------------------
+
+\begin{document}
+\maketitle
+%\tableofcontents{}
+\newpage
+
+% ------------------------------------------------
+
+\section{Problem 1 Solution}
+\subsection*{Part (a)}
+
+\addtolength{\jot}{0.25em}
+\begin{enumerate}
+    \item (i) Prove $\Pr(A | B) > \Pr(A) \iff \Pr(B | A) > \Pr(B)$.
+        \begin{align*}
+            \Pr(A | B) &> \Pr(A) \\
+            \frac{\Pr(A \cap B)}{\Pr(B)} &> \Pr(A) \\
+            \frac{\Pr(A \cap B)}{\Pr(A)} &> \Pr(B) \\
+            \Pr(B | A) &> \Pr(A)
+        \end{align*}
+
+        (ii) Prove $\Pr(A | B) > \Pr(A) \iff \Pr(A^c | B^c) > \Pr(A^c)$.
+        \begin{align*}
+            \Pr(A | B) &> \Pr(A) \\
+            \frac{\Pr(A \cap B)}{\Pr(B)} &> \Pr(A) \\
+            \Pr(A \cap B) &> \Pr(A) \Pr(B) \\
+            1 - \Pr(A \cap B) &< 1 - \Pr(A) \Pr(B) \\
+            \Pr((A \cap B)^c) &< 1 - (1 - \Pr(A^c)) (1 - \Pr(B^c)) \\
+            \Pr(A^c \cup B^c) &< 1 - (1 - \Pr(A^c) - \Pr(B^c) + \Pr(A^c) \Pr(B^c)) \\
+            \Pr(A^c) + \Pr(B^c) - \Pr(A^c \cap B^c) &< \Pr(A^c) + \Pr(B^c) - \Pr(A^c) \Pr(B^c) \\
+            \Pr(A^c \cap B^c) &> \Pr(A^c) \Pr(B^c) \\
+            \frac{\Pr(A^c \cap B^c)}{\Pr(B^c)} &> \Pr(A^c) \\
+            \Pr(A^c | B^c) &> \Pr(A^c)
+        \end{align*}
+
+    \item Noisy channel % TODO
+\end{enumerate}
+
+
+\subsection*{Part (b)}
+
+If $p_k$ is the probability that the ant gets the sugar if it starts $k$
+centimeters to the right of the sugar, then our aim is to find $p_1$.
+Now, for $0 < k \le n$,
+\begin{align}
+    p_0 &= 1 \nonumber \\
+    p_{n+1} &= 0 \label{eq:p_n1} \\
+    p_k &= 0.5 p_{k-1} + 0.5 p_{k+1} \label{eq:p_k}
+\end{align}
+
+For $k = n$ in equation \ref{eq:p_k},
+\begin{align}
+    p_n &= \frac{1}{2} p_{n-1} \label{eq:p_n}
+\end{align}
+
+For $k = n - 1$ in equation \ref{eq:p_k} and $n > 1$,
+\begin{align*}
+    p_{n-1} &= \frac{1}{2} p_{n-2} + \frac{1}{2} p_n \\
+            &= \frac{1}{2} p_{n-2} + \frac{1}{4} p_{n-1} \tag{from \ref{eq:p_n}} \\
+    \Rightarrow \frac{3}{4} p_{n-1} &= \frac{1}{2} p_{n-2} \\
+    \Rightarrow p_{n-1} &= \frac{2}{3} p_{n-2}
+\end{align*}
+
+Similarly, for $k = n - 2$ and $n > 2$,
+\begin{align*}
+    p_{n-2} &= \frac{1}{2} p_{n-3} + \frac{1}{2} p_{n-1} \\
+    \Rightarrow p_{n-2} &= \frac{3}{4} p_{n-3}
+\end{align*}
+
+And for $k = n - 3$ and $n > 3$, we get
+\begin{align*}
+    p_{n-3} &= 4/5 p_{n-4}
+\end{align*}
+
+This pattern can be generalized as, for $n > c \ge 0$,
+\begin{equation}\label{eq:pnk_rec}
+    p_{n-c} = \frac{c + 1}{c + 2} p_{n-c-1}
+\end{equation}
+
+For $c = n - 2$ in equation \ref{eq:pnk_rec} and $n \ge 2$,
+\begin{align}
+    p_2 &= \frac{n - 1}{n} p_1 \label{eq:p_2}
+\end{align}
+
+For $k = 1$ in equation \ref{eq:p_k},
+\begin{align}
+    p_1 &= 0.5 p_0 + 0.5 p_2 \nonumber \\
+        &= 0.5 + 0.25 p_1 + 0.25 p_2 \nonumber \\
+    \Rightarrow \frac{3}{4} p_1 &= \frac{1}{2} + \frac{1}{4} p_2 \nonumber \\
+    \Rightarrow p_1 &= \frac{2}{3} + \frac{1}{3} p_2 \label{eq:p_1}
+\end{align}
+
+Equation \ref{eq:p_2} in equation \ref{eq:p_1}, for $n \ge 2$,
+\begin{align*}
+    p_1 &= \frac{2}{3} + \frac{n - 1}{3n} p_1 \\
+    \Rightarrow \frac{2n + 1}{3n} p_1 &= \frac{2}{3} \\
+    \Rightarrow p_1 &= \frac{2n}{2n + 1}
+\end{align*}
+
+% ------------------------------------------------
+
+\section{Problem 2 Solution}
+\subsection*{Part (a)}
+Now\footnote{Inductor is Short} applying current divider technique one could easily calculate the following currents:\par
+
+\subsection*{Part (b)}
+Adopting ZIR\footnote{Since, there is no source in the circuit} solution~\eqref{eq:7} 
+
+% ------------------------------------------------
+
+\section{Problem 3 Solution}
+\subsection*{Part (a)}
+The voltage drop on the capacitor\footnote{Open-Circuited Capacitor } on Figure~\ref{fig:q1fig2} as follows
+
+\subsection*{Part (b)}
+Replacing capacitor with a test voltage, as shown on 
+\begin{align}
+v_t-v_{\phi}&=25k\alpha \cdot v_{\phi} \nonumber \\
+v_t=(1+25k\alpha) \cdot v_{\phi}&=15k(1+25k\alpha) \cdot i_t \nonumber \\
+\Aboxed{R_{in}(C)&=15k(1+25k\alpha) \label{eq:10}}
+\end{align}
+
+\subsection*{Part (c)}
+\begin{align*}
+\Aboxed{\alpha \approx 2.26 \cdot 10^{-4}}
+\end{align*}
+
+\subsection*{Part (d)}
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=.6]{Pics/Dolor.jpg}
+\caption{Caption of the figure}
+\label{fig:q3fig1}
+\end{figure}
+
+% ------------------------------------------------
+
+\end{document}
