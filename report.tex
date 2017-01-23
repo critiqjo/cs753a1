@@ -10,8 +10,7 @@
 \usepackage{booktabs}
 
 \usepackage{amsmath, amssymb, amsfonts, amsthm, mathtools}
-%\usepackage{microtype} %improves the spacing between words and letters
-
+\usepackage{microtype} %improves the spacing between words and letters
 \usepackage{graphicx}
 
 
@@ -21,7 +20,6 @@
 \usepackage[svgnames]{xcolor} % Enabling mixing colors and color's call by 'svgnames'
 % ------------------------------------------------
 \definecolor{MyBlue}{rgb}{0.2,0.4,0.6} %mix personal color
-\newcommand{\textb}{\color{Black} \usefont{OT1}{lmss}{m}{n}}
 \newcommand{\blue}{\color{MyBlue} \usefont{OT1}{lmss}{m}{n}}
 \newcommand{\blueb}{\color{MyBlue} \usefont{OT1}{lmss}{b}{n}}
 % ------------------------------------------------
@@ -41,10 +39,8 @@
 % ------------------------------------------------
 %% TITLE
 % ------------------------------------------------
-\title{\blue CS 753: Automatic Speech Recognition \\
-\blueb Assignment 1 (Part 1)}
-\author{John C F\\
- \small 14305R006}
+\title{\blue CS 753: Automatic Speech Recognition \\ \blueb Assignment 1 (Part 1)}
+\author{John C F \\ \small 14305R006}
 \date{\today}
 % ------------------------------------------------
 
@@ -60,7 +56,7 @@
 
 \addtolength{\jot}{0.25em}
 \begin{enumerate}
-    \item (i) Prove $\Pr(A | B) > \Pr(A) \iff \Pr(B | A) > \Pr(B)$.
+    \item (i) To prove $\Pr(A | B) > \Pr(A) \iff \Pr(B | A) > \Pr(B)$.
         \begin{align*}
             \Pr(A | B) &> \Pr(A) \\
             \frac{\Pr(A \cap B)}{\Pr(B)} &> \Pr(A) \\
@@ -68,7 +64,7 @@
             \Pr(B | A) &> \Pr(A)
         \end{align*}
 
-        (ii) Prove $\Pr(A | B) > \Pr(A) \iff \Pr(A^c | B^c) > \Pr(A^c)$.
+        (ii) To prove $\Pr(A | B) > \Pr(A) \iff \Pr(A^c | B^c) > \Pr(A^c)$.
         \begin{align*}
             \Pr(A | B) &> \Pr(A) \\
             \frac{\Pr(A \cap B)}{\Pr(B)} &> \Pr(A) \\
@@ -82,7 +78,33 @@
             \Pr(A^c | B^c) &> \Pr(A^c)
         \end{align*}
 
-    \item Noisy channel % TODO
+    \item Let $S_b$ denote sending bit $b$, and $R_b$ denote receiving bit $b$.
+        The problem is to prove that $\Pr(S_0 | R_0) > \Pr(S_0)$ given that the
+        probability of the bit being flipped by the channel is $\epsilon < 1/2$.
+
+        \begin{align*}
+            \Pr(R_0 | S_0) &= 1 - \epsilon \\
+            \Pr(S_0) &= p \tag{given} \\
+            \therefore~\Pr(R_0 \cap S_0) &= (1 - \epsilon) p \\
+        \end{align*}
+        Now,
+        \begin{align*}
+            \Pr(R_0) &= \Pr(R_0 | S_0)\Pr(S_0) + \Pr(R_0 | S_1)\Pr(S_1) \\
+                     &= (1 - \epsilon) p + \epsilon (1 - p) \\
+            \Pr(S_0 | R_0) &= \frac{\Pr(R_0 \cap S_0)}{\Pr(R_0)} \\
+                           &= \frac{(1 - \epsilon) p}
+                                   {(1 - \epsilon) p + \epsilon (1 - p)} \\
+                           &= p \cdot \frac{1}{p + \frac{\epsilon}{1 - \epsilon} \cdot (1 - p)} \\
+                           &< p
+        \end{align*}
+        Because
+        \begin{align*}
+                        &\epsilon < 1/2 \\
+            \Rightarrow~&\frac{\epsilon}{1 - \epsilon} < 1 \\
+            \Rightarrow~&p + \frac{\epsilon}{1 - \epsilon} \cdot (1 - p) < 1 \\
+            \Rightarrow~& \Pr(S_0 | R_0) > p \\
+            \therefore~ & \Pr(S_0 | R_0) > \Pr(S_0)
+        \end{align*}
 \end{enumerate}
 
 
@@ -118,12 +140,12 @@ Similarly, for $k = n - 2$ and $n > 2$,
 
 And for $k = n - 3$ and $n > 3$, we get
 \begin{align*}
-    p_{n-3} &= 4/5 p_{n-4}
+    p_{n-3} &= \frac{4}{5} p_{n-4}
 \end{align*}
 
 This pattern can be generalized as, for $n > c \ge 0$,
 \begin{equation}\label{eq:pnk_rec}
-    p_{n-c} = \frac{c + 1}{c + 2} p_{n-c-1}
+    p_{n-c} = \frac{c + 1}{c + 2} \cdot p_{n-c-1}
 \end{equation}
 
 For $c = n - 2$ in equation \ref{eq:pnk_rec} and $n \ge 2$,
@@ -153,13 +175,12 @@ Equation \ref{eq:p_2} in equation \ref{eq:p_1}, for $n \ge 2$,
 Now\footnote{Inductor is Short} applying current divider technique one could easily calculate the following currents:\par
 
 \subsection*{Part (b)}
-Adopting ZIR\footnote{Since, there is no source in the circuit} solution~\eqref{eq:7} 
+Adopting ZIR\footnote{Since, there is no source in the circuit} solution
 
 % ------------------------------------------------
 
 \section{Problem 3 Solution}
 \subsection*{Part (a)}
-The voltage drop on the capacitor\footnote{Open-Circuited Capacitor } on Figure~\ref{fig:q1fig2} as follows
 
 \subsection*{Part (b)}
 Replacing capacitor with a test voltage, as shown on 
@@ -173,14 +194,6 @@ v_t=(1+25k\alpha) \cdot v_{\phi}&=15k(1+25k\alpha) \cdot i_t \nonumber \\
 \begin{align*}
 \Aboxed{\alpha \approx 2.26 \cdot 10^{-4}}
 \end{align*}
-
-\subsection*{Part (d)}
-\begin{figure}[!htb]
-\centering
-\includegraphics[scale=.6]{Pics/Dolor.jpg}
-\caption{Caption of the figure}
-\label{fig:q3fig1}
-\end{figure}
 
 % ------------------------------------------------
 
