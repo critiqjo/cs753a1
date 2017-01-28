@@ -51,7 +51,7 @@
 
 % ------------------------------------------------
 
-\section{Problem 1 Solution}
+\section*{Problem 1 Solution}
 \subsection*{Part (a)}
 
 \addtolength{\jot}{0.25em}
@@ -154,43 +154,81 @@ For $c = n - 2$ in equation \ref{eq:pnk_rec} and $n \ge 2$,
 
 For $k = 1$ in equation \ref{eq:p_k},
 \begin{align}
-    p_1 &= 0.5 p_0 + 0.5 p_2 \nonumber \\
-        &= 0.5 + 0.25 p_1 + 0.25 p_2 \nonumber \\
-    \Rightarrow \frac{3}{4} p_1 &= \frac{1}{2} + \frac{1}{4} p_2 \nonumber \\
-    \Rightarrow p_1 &= \frac{2}{3} + \frac{1}{3} p_2 \label{eq:p_1}
+    p_1 &= \frac{1}{2} p_0 + \frac{1}{2} p_2 \nonumber \\
+    \Rightarrow 2 p_1 &= 1 + p_2 \label{eq:p_1}
 \end{align}
 
 Equation \ref{eq:p_2} in equation \ref{eq:p_1}, for $n \ge 2$,
 \begin{align*}
-    p_1 &= \frac{2}{3} + \frac{n - 1}{3n} p_1 \\
-    \Rightarrow \frac{2n + 1}{3n} p_1 &= \frac{2}{3} \\
-    \Rightarrow p_1 &= \frac{2n}{2n + 1}
+    2p_1 &= 1 + \frac{n - 1}{n} p_1 \\
+    \Rightarrow \frac{n + 1}{n} p_1 &= 1 \\
+    \Rightarrow~\Aboxed{p_1 &= \frac{n}{n + 1}}
 \end{align*}
+
+For $n = 1$, $p_1 = 1/2$, since the ant can only take a single random move.
+Thus, the above equation holds for $n \ge 1$.
 
 % ------------------------------------------------
 
-\section{Problem 2 Solution}
+\section*{Problem 2 Solution}
 \subsection*{Part (a)}
 
 \subsection*{Part (b)}
 
 % ------------------------------------------------
 
-\section{Problem 3 Solution}
+\section*{Problem 3 Solution}
 \subsection*{Part (a)}
-(i) Calculate $p = \Pr(q_{t+1} = k | q_t = j, o_1, \cdots, o_T)$
+(i) To calculate: $\Pr(q_{t+1} = k | q_t = j, o_1, \cdots, o_T)$
 \begin{align*}
-    p &= \frac{\Pr(q_{t+1} = k, q_t = j, o_1, \cdots, o_T)}{\Pr{q_t = j, o_1, \cdots, o_T}} \\
-      &= \frac{\Pr()}
+    ~~ &= \Pr(q_{t+1} = k | q_t = j, o_{t+1}, \cdots, o_T) \tag{Markov property} \\
+       &= \frac{\Pr(q_{t+1} = k, o_1, \cdots, o_T | q_t = j)}
+               {\Pr(o_{t+1}, \cdots, o_T | q_t = j)} \\
+       &= \frac{\Pr(o_{t+1}, \cdots, o_T | q_{t+1} = k, q_t = j) \cdot \Pr(q_{t+1} = k | q_t = j)}
+               {\beta_t(j)} \\
+       &= \frac{\Pr(o_{t+1}, \cdots, o_T | q_{t+1} = k) \cdot a_{jk}}
+               {\beta_t(j)} \tag{Markov property} \\
+       &= \frac{\Pr(o_{t+2}, \cdots, o_T | o_{t+1}, q_{t+1} = k) \cdot \Pr(o_{t+1} | q_{t+1} = k) \cdot a_{jk}}
+               {\beta_t(j)} \\
+       &= \frac{\Pr(o_{t+2}, \cdots, o_T | q_{t+1} = k) \cdot b_k(o_{t+1}) \cdot a_{jk}}
+               {\beta_t(j)} \tag{Markov property} \\
+       &= \frac{\beta_{t+1}(k) \cdot b_k(o_{t+1}) \cdot a_{jk}}
+               {\beta_t(j)}
+\end{align*}
+For the sake of next part, let's define a function $p_t(i, j)$ as follows:
+\begin{align*}
+    p_t(i, j) &= \Pr(q_{t+1} = j | q_t = i, o_1 \cdots o_T) \\
+              &= a_{ij} \cdot b_j(o_{t+1}) \cdot \frac{\beta_{t+1}(j)}{\beta_t(i)}
+\end{align*}
+(ii) To calculate: $\Pr(q_{t-1} = i, q_t = j, q_{t+1} = k | o_1, \cdots, o_T)$
+\begin{align*}
+    ~~ &= \Pr(q_{t+1} = k | q_{t-1} = i, q_t = j, o_1, \cdots, o_T) \cdot \Pr(q_{t-1} = i, q_t = j | o_1, \cdots, o_T) \\
+       &= \Pr(q_{t+1} = k | q_t = j, o_1, \cdots, o_T) \cdot \Pr(q_{t-1} = i, q_t = j | o_1, \cdots, o_T) \\
+       &= p_t(j, k) \cdot \Pr(q_{t-1} = i, q_t = j | o_1, \cdots, o_T) \\
+       &= p_t(j, k) \cdot \Pr(q_t = j | q_{t-1} = i, o_1, \cdots, o_T) \cdot \Pr(q_{t-1} = i | o_1, \cdots, o_T) \\
+       &= p_t(j, k) \cdot p_{t-1}(i, j) \cdot \frac{\Pr(q_{t-1} = i, o_1, \cdots, o_T)}{\Pr(o_1, \cdots, o_T)} \\
+       &= p_t(j, k) \cdot p_{t-1}(i, j) \cdot
+          \frac{\Pr(o_t, \cdots, o_T | o_1, \cdots, o_{t-1}, q_{t-1} = i) \cdot
+                \Pr(o_1, \cdots, o_{t-1}, q_{t-1} = i)}
+               {\sum_{h \in Q}\Pr(o_1, \cdots, o_T | q_T = h) \cdot \Pr(q_T = h)} \\
+       &= p_t(j, k) \cdot p_{t-1}(i, j) \cdot
+          \frac{\Pr(o_t, \cdots, o_T | q_{t-1} = i) \cdot \alpha_{t-1}(i)}
+               {\sum_{h \in Q}\Pr(o_1, \cdots, o_T, q_T = h)} \\
+       &= p_t(j, k) \cdot p_{t-1}(i, j) \cdot
+          \frac{\beta_{t-1}(i) \cdot \alpha_{t-1}(i)}{\sum_{h \in Q}\alpha_T(h)}
+\end{align*}
+Now, expanding $p_t(j, k)$ and $p_{t-1}(i, j)$,
+\begin{align*}
+    ~~ &= a_{jk} \cdot b_k(o_{t+1}) \cdot \frac{\beta_{t+1}(k)}{\beta_t(j)} \cdot
+          a_{ij} \cdot b_j(o_t) \cdot \frac{\beta_t(j)}{\beta_{t-1}(i)} \cdot
+          \frac{\beta_{t-1}(i) \cdot \alpha_{t-1}(i)}{\sum_{h \in Q}\alpha_T(h)} \\
+       &= a_{ij} \cdot a_{jk} \cdot b_k(o_{t+1}) \cdot b_j(o_t) \cdot
+          \frac{\beta_{t+1}(k) \cdot \alpha_{t-1}(i)}{\sum_{h \in Q}\alpha_T(h)} \\
 \end{align*}
 
 \subsection*{Part (b)}
-Replacing capacitor with a test voltage, as shown on 
-\begin{align}
-v_t-v_{\phi}&=25k\alpha \cdot v_{\phi} \nonumber \\
-v_t=(1+25k\alpha) \cdot v_{\phi}&=15k(1+25k\alpha) \cdot i_t \nonumber \\
-\Aboxed{R_{in}(C)&=15k(1+25k\alpha) \label{eq:10}}
-\end{align}
+
+We can change the recursion step as follows:
 
 \subsection*{Part (c)}
 \begin{align*}
