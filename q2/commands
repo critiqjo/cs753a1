@@ -1,0 +1,18 @@
+# compile e
+fstcompile --isymbols=syms.txt --osymbols=syms.txt e.fst.txt | fstarcsort --sort_type=olabel >e.fst
+
+# generate and compile t
+./gen-chain-fst.py >t.fst.txt
+fstcompile --isymbols=syms.txt --osymbols=syms.txt t.fst.txt | fstarcsort --sort_type=ilabel >t.fst
+
+# compose e with t
+fstcompose e.fst t.fst | fstarcsort --sort_type=ilabel >e-t.fst
+
+# compile a1
+fstcompile --isymbols=syms.txt --acceptor a1.fst.txt | fstarcsort --sort_type=olabel >a1.fst
+
+# compose a1 with e-t
+fstcompose a1.fst e-t.fst >a1-e-t.fst
+
+# draw a1-e-t.fst
+fstdraw --portrait --isymbols=syms.txt --osymbols=syms.txt a1-e-t.fst | dot -Tsvg > out.svg

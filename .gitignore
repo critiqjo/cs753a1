@@ -1,0 +1,7 @@
+q2/*.fst
+q2/t.fst.txt
+*.aux
+*.log
+*.out
+*.pdf
+*.toc

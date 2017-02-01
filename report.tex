@@ -39,7 +39,7 @@
 % ------------------------------------------------
 %% TITLE
 % ------------------------------------------------
-\title{\blue CS 753: Automatic Speech Recognition \\ \blueb Assignment 1 (Part 1)}
+\title{\blue CS 753: Automatic Speech Recognition \\ \blueb Assignment 1}
 \author{John C F \\ \small 14305R006}
 \date{\today}
 % ------------------------------------------------
@@ -179,41 +179,40 @@ Thus, the above equation holds for $n \ge 1$.
 
 \section*{Problem 3 Solution}
 \subsection*{Part (a)}
-(i) To calculate: $\Pr(q_{t+1} = k | q_t = j, o_1, \cdots, o_T)$
+(i) To calculate: $\Pr(q_{t+1} = k | q_t = j, o_1, \cdots o_T)$
 \begin{align*}
-    ~~ &= \Pr(q_{t+1} = k | q_t = j, o_{t+1}, \cdots, o_T) \tag{Markov property} \\
-       &= \frac{\Pr(q_{t+1} = k, o_1, \cdots, o_T | q_t = j)}
-               {\Pr(o_{t+1}, \cdots, o_T | q_t = j)} \\
-       &= \frac{\Pr(o_{t+1}, \cdots, o_T | q_{t+1} = k, q_t = j) \cdot \Pr(q_{t+1} = k | q_t = j)}
+    ~~ &= \Pr(q_{t+1} = k | q_t = j, o_{t+1}, \cdots o_T) \tag{Markov property} \\
+       &= \frac{\Pr(q_{t+1} = k, o_1, \cdots o_T | q_t = j)}
+               {\Pr(o_{t+1}, \cdots o_T | q_t = j)} \\
+       &= \frac{\Pr(o_{t+1}, \cdots o_T | q_{t+1} = k, q_t = j) \cdot \Pr(q_{t+1} = k | q_t = j)}
                {\beta_t(j)} \\
-       &= \frac{\Pr(o_{t+1}, \cdots, o_T | q_{t+1} = k) \cdot a_{jk}}
-               {\beta_t(j)} \tag{Markov property} \\
-       &= \frac{\Pr(o_{t+2}, \cdots, o_T | o_{t+1}, q_{t+1} = k) \cdot \Pr(o_{t+1} | q_{t+1} = k) \cdot a_{jk}}
+       &= \frac{\Pr(o_{t+1}, \cdots o_T | q_{t+1} = k) \cdot a_{jk}}
+               {\beta_t(j)} \tag{Markov prop.} \\
+       &= \frac{\Pr(o_{t+2}, \cdots o_T | o_{t+1}, q_{t+1} = k) \cdot \Pr(o_{t+1} | q_{t+1} = k) \cdot a_{jk}}
                {\beta_t(j)} \\
-       &= \frac{\Pr(o_{t+2}, \cdots, o_T | q_{t+1} = k) \cdot b_k(o_{t+1}) \cdot a_{jk}}
-               {\beta_t(j)} \tag{Markov property} \\
+       &= \frac{\Pr(o_{t+2}, \cdots o_T | q_{t+1} = k) \cdot b_k(o_{t+1}) \cdot a_{jk}}
+               {\beta_t(j)} \tag{Markov prop.} \\
        &= \frac{\beta_{t+1}(k) \cdot b_k(o_{t+1}) \cdot a_{jk}}
                {\beta_t(j)}
 \end{align*}
 For the sake of next part, let's define a function $p_t(i, j)$ as follows:
 \begin{align*}
-    p_t(i, j) &= \Pr(q_{t+1} = j | q_t = i, o_1 \cdots o_T) \\
+    p_t(i, j) &= \Pr(q_{t+1} = j | q_t = i, o_1, \cdots o_T) \\
               &= a_{ij} \cdot b_j(o_{t+1}) \cdot \frac{\beta_{t+1}(j)}{\beta_t(i)}
 \end{align*}
-(ii) To calculate: $\Pr(q_{t-1} = i, q_t = j, q_{t+1} = k | o_1, \cdots, o_T)$
+(ii) To calculate: $\Pr(q_{t-1} = i, q_t = j, q_{t+1} = k | o_1, \cdots o_T)$
 \begin{align*}
-    ~~ &= \Pr(q_{t+1} = k | q_{t-1} = i, q_t = j, o_1, \cdots, o_T) \cdot \Pr(q_{t-1} = i, q_t = j | o_1, \cdots, o_T) \\
-       &= \Pr(q_{t+1} = k | q_t = j, o_1, \cdots, o_T) \cdot \Pr(q_{t-1} = i, q_t = j | o_1, \cdots, o_T) \\
-       &= p_t(j, k) \cdot \Pr(q_{t-1} = i, q_t = j | o_1, \cdots, o_T) \\
-       &= p_t(j, k) \cdot \Pr(q_t = j | q_{t-1} = i, o_1, \cdots, o_T) \cdot \Pr(q_{t-1} = i | o_1, \cdots, o_T) \\
-       &= p_t(j, k) \cdot p_{t-1}(i, j) \cdot \frac{\Pr(q_{t-1} = i, o_1, \cdots, o_T)}{\Pr(o_1, \cdots, o_T)} \\
+    ~~ &= \Pr(q_{t+1} = k | q_{t-1} = i, q_t = j, o_1, \cdots o_T) \cdot \Pr(q_{t-1} = i, q_t = j | o_1, \cdots o_T) \\
+       &= \Pr(q_{t+1} = k | q_t = j, o_1, \cdots o_T) \cdot \Pr(q_{t-1} = i, q_t = j | o_1, \cdots o_T) \tag{Markov prop.} \\
+       &= p_t(j, k) \cdot \Pr(q_t = j | q_{t-1} = i, o_1, \cdots o_T) \cdot \Pr(q_{t-1} = i | o_1, \cdots o_T) \\
+       &= p_t(j, k) \cdot p_{t-1}(i, j) \cdot \frac{\Pr(q_{t-1} = i, o_1, \cdots o_T)}{\Pr(o_1, \cdots o_T)} \\
        &= p_t(j, k) \cdot p_{t-1}(i, j) \cdot
-          \frac{\Pr(o_t, \cdots, o_T | o_1, \cdots, o_{t-1}, q_{t-1} = i) \cdot
-                \Pr(o_1, \cdots, o_{t-1}, q_{t-1} = i)}
-               {\sum_{h \in Q}\Pr(o_1, \cdots, o_T | q_T = h) \cdot \Pr(q_T = h)} \\
+          \frac{\Pr(o_t, \cdots o_T | o_1, \cdots o_{t-1}, q_{t-1} = i) \cdot
+                \Pr(o_1, \cdots o_{t-1}, q_{t-1} = i)}
+               {\sum_{h \in Q}\Pr(o_1, \cdots o_T | q_T = h) \cdot \Pr(q_T = h)} \\
        &= p_t(j, k) \cdot p_{t-1}(i, j) \cdot
-          \frac{\Pr(o_t, \cdots, o_T | q_{t-1} = i) \cdot \alpha_{t-1}(i)}
-               {\sum_{h \in Q}\Pr(o_1, \cdots, o_T, q_T = h)} \\
+          \frac{\Pr(o_t, \cdots o_T | q_{t-1} = i) \cdot \alpha_{t-1}(i)}
+               {\sum_{h \in Q}\Pr(o_1, \cdots o_T, q_T = h)} \\
        &= p_t(j, k) \cdot p_{t-1}(i, j) \cdot
           \frac{\beta_{t-1}(i) \cdot \alpha_{t-1}(i)}{\sum_{h \in Q}\alpha_T(h)}
 \end{align*}
@@ -228,13 +227,67 @@ Now, expanding $p_t(j, k)$ and $p_{t-1}(i, j)$,
 
 \subsection*{Part (b)}
 
-We can change the recursion step as follows:
-
-\subsection*{Part (c)}
+\textbf{Recursion:} For all $1 < t \le T$,
 \begin{align*}
-\Aboxed{\alpha \approx 2.26 \cdot 10^{-4}}
+    v_{t-1, max} &= \max_{j=1}^N v_{t-1}(j) \\
+    bt_{t-1, max} &= \textrm{arg}\max_{j=1}^N v_{t-1}(j) % FIXME
+\end{align*}
+And for all $1 \le j \le N$,
+\begin{align*}
+    v_t(j) &=
+    \begin{dcases}
+        v_{t-1, max} \; q \; b_j(o_t)
+            & {\rm if~} bt_{t-1, max} \ne j {\rm~and~} v_{t-1, max} \; q > v_{t-1}(j) \; p \\
+        v_{t-1}(j) \; p \; b_j(o_t)
+            & \textrm{otherwise}
+    \end{dcases} \\
+    bt_t(j) &=
+    \begin{dcases}
+        bt_{t-1,max}
+            & {\rm if~} bt_{t-1, max} \ne j {\rm~and~} v_{t-1, max} \; q > v_{t-1}(j) \; p \\
+        j
+            & \textrm{otherwise}
+    \end{dcases}
 \end{align*}
 
+\noindent \textbf{Initialization} and \textbf{Termination} steps remain unchanged.
+
+\subsection*{Part (c)}
+
+\begin{enumerate}
+    \item \textbf{Initialization:} For all $1 \le j \le N$,
+        \begin{align*}
+            v_1(j) &= a_{0j} \; b_j(o1) \\
+            bt_1(j) &= 0 \\
+            c_1(j) &= 0
+        \end{align*}
+    \item \textbf{Recursion:} For all $1 < t \le T$ and $1 \le j \le N$,\\
+        If $c_{t-1}(j) < k$,
+        \begin{align*}
+            v_t(j) &= \max_{i=1}^{N} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
+            bt_t(j) &= \textrm{arg}\max_{i=1}^{N} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
+            c_t(j) &=
+            \begin{dcases}
+                c_{t-1}(j) + 1 & {\rm if~} bt_t(j) = j \\
+                0 & {\rm otherwise} \\
+            \end{dcases}
+        \end{align*}
+        otherwise,
+        \begin{align*}
+            v_t(j) &= \max_{1 \le i \le N}^{i \ne j} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
+            bt_t(j) &= \textrm{arg}\max_{1 \le i \le N}^{i \ne j} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
+            c_t(j) &= 0
+        \end{align*}
+    \item \textbf{Termination:} (unchanged)
+        \begin{align*}
+            \textrm{The best score:}&~~ P* = v_T(q_F) = \max_{i=1}^N v_T(i) \; a_{iF} \\
+            \textrm{The start of backtrace:}&~~ q_T* = bt_T(q_F) = {\rm arg}\max_{i=1}^N v_T(i) \; a_{iF}
+        \end{align*}
+\end{enumerate}
+
 % ------------------------------------------------
+
+\section*{Problem 4 Solution}
+\subsection*{Part (a)}
 
 \end{document}
