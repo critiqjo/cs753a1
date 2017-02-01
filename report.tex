@@ -171,9 +171,22 @@ Thus, the above equation holds for $n \ge 1$.
 % ------------------------------------------------
 
 \section*{Problem 2 Solution}
-\subsection*{Part (a)}
 
-\subsection*{Part (b)}
+\subsection*{Part (c)}
+
+Normalize the weights given due to unigram frequencies to be between 0 and 1.
+This way, edit distance will always take precedence.
+
+\subsection*{Part (d)}
+
+\begin{itemize}
+    \item Lower the cost of changing letters that sounds similar (e.g. c to k,
+        o to au etc.).
+    \item Lower the cost of deletion of one of the consonants that are next to
+        each other in QWERTY layout, when appearing together (a mistype).
+    \item Lower the cost of repeating a consonant when in the middle of a word
+        (esp. t to tt).
+\end{itemize}
 
 % ------------------------------------------------
 
