@@ -8,11 +8,11 @@ fstcompile --isymbols=syms.txt --osymbols=syms.txt t.fst.txt | fstarcsort --sort
 # compose e with t
 fstcompose e.fst t.fst | fstarcsort --sort_type=ilabel >e-t.fst
 
-# compile a1
-fstcompile --isymbols=syms.txt --acceptor a1.fst.txt | fstarcsort --sort_type=olabel >a1.fst
+# compile a
+fstcompile --isymbols=syms.txt --acceptor a1.fst.txt | fstarcsort --sort_type=olabel >a.fst
 
-# compose a1 with e-t
-fstcompose a1.fst e-t.fst >a1-e-t.fst
+# compose a with e-t
+fstcompose a.fst e-t.fst >a-e-t.fst
 
-# draw a1-e-t.fst
-fstdraw --portrait --isymbols=syms.txt --osymbols=syms.txt a1-e-t.fst | dot -Tsvg > out.svg
+# draw a-e-t.fst
+fstdraw --portrait --isymbols=syms.txt --osymbols=syms.txt a-e-t.fst | dot -Tsvg > out.svg
