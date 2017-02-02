@@ -13,6 +13,10 @@
 \usepackage{microtype} %improves the spacing between words and letters
 \usepackage{graphicx}
 
+% -----------------------------------------------
+\DeclareMathOperator*{\argmax}{arg\,max} % Jan Hlavacek
+% -----------------------------------------------
+
 
 % ------------------------------------------------
 %% COLOR DEFINITIONS
@@ -243,7 +247,7 @@ Now, expanding $p_t(j, k)$ and $p_{t-1}(i, j)$,
 \textbf{Recursion:} For all $1 < t \le T$,
 \begin{align*}
     v_{t-1, max} &= \max_{j=1}^N v_{t-1}(j) \\
-    bt_{t-1, max} &= \textrm{arg}\max_{j=1}^N v_{t-1}(j) % FIXME
+    bt_{t-1, max} &= \argmax_{j=1}^N v_{t-1}(j) % FIXME
 \end{align*}
 And for all $1 \le j \le N$,
 \begin{align*}
@@ -278,7 +282,7 @@ And for all $1 \le j \le N$,
         If $c_{t-1}(j) < k$,
         \begin{align*}
             v_t(j) &= \max_{i=1}^{N} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
-            bt_t(j) &= \textrm{arg}\max_{i=1}^{N} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
+            bt_t(j) &= \argmax_{i=1}^{N} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
             c_t(j) &=
             \begin{dcases}
                 c_{t-1}(j) + 1 & {\rm if~} bt_t(j) = j \\
@@ -288,19 +292,25 @@ And for all $1 \le j \le N$,
         otherwise,
         \begin{align*}
             v_t(j) &= \max_{1 \le i \le N}^{i \ne j} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
-            bt_t(j) &= \textrm{arg}\max_{1 \le i \le N}^{i \ne j} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
+            bt_t(j) &= \argmax_{1 \le i \le N}^{i \ne j} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
             c_t(j) &= 0
         \end{align*}
     \item \textbf{Termination:} (unchanged)
         \begin{align*}
             \textrm{The best score:}&~~ P* = v_T(q_F) = \max_{i=1}^N v_T(i) \; a_{iF} \\
-            \textrm{The start of backtrace:}&~~ q_T* = bt_T(q_F) = {\rm arg}\max_{i=1}^N v_T(i) \; a_{iF}
+            \textrm{The start of backtrace:}&~~ q_T* = bt_T(q_F) = \argmax_{i=1}^N v_T(i) \; a_{iF}
         \end{align*}
 \end{enumerate}
 
 % ------------------------------------------------
 
 \section*{Problem 4 Solution}
+\subsection*{Part (a)}
+
+\section*{Problem 5 Solution}
+\subsection*{Part (a)}
+
+\section*{Problem 6 Solution}
 \subsection*{Part (a)}
 
 \end{document}
