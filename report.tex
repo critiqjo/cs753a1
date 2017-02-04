@@ -8,6 +8,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{booktabs}
+\usepackage{enumerate}
 
 \usepackage{amsmath, amssymb, amsfonts, amsthm, mathtools}
 \usepackage{microtype} %improves the spacing between words and letters
@@ -344,7 +345,7 @@ variable. That is, repeat (over $t$ with a randomly initialized $\mu^{(0)}$):
                         &= \sum_{\mathcal{Y}} \Pr(\mathcal{Y} | \mathcal{X}, \mu^{(t-1)})
                                               \sum_{(x, y) \in \mathcal{Z}} \log \Pr(x, y| \mu) \\
                         &= \sum_{x \in \mathcal{X}} \sum_{y \in \bf Y} \Pr (y | x, \mu^{(t-1)})
-                                                        \log \Pr(x, y| \mu) \tag{Abracadabra!}
+                                                        \log \Pr(x, y| \mu) \tag{Margin too small!}
 \end{align*}
 Note that in the above expression, the only unknown variable is $\mu$.
 
@@ -378,7 +379,32 @@ Note that in the above expression, the only unknown variable is $\mu$.
 
 \subsection*{Part (b)}
 
-?
+Let $N$ be the total number of students, and $\alpha$ denote the number of
+students that are assigned a grade starting with letter $A$. Thus $Q$ can be
+rewriteen as:
+\begin{align*}
+    Q(\mu, \mu^{(t-1)}) =\; &\alpha\sum_{y \in \rm\bf Y} \Pr(y | x=A, \mu^{(t-1)}) \log \Pr(x=A, y | \mu) + \\
+                          &(N-\alpha)\sum_{y \in \rm\bf Y} \Pr(y | x=B, \mu^{(t-1)}) \log \Pr(x=B, y | \mu)
+\end{align*}
+Ignoring negative infinity terms, we get:
+\begin{align*}
+    Q(\mu, \mu^{(t-1)}) =\; &\alpha\left( \frac{0.25}{0.25 + \mu^{(t-1)}} \log 0.25 + \frac{\mu^{(t-1)}}{0.25 + \mu^{(t-1)}} \log \mu \right) + \\
+                          &(N-\alpha)\left( \frac{3\mu^{(t-1)}}{0.75 - \mu^{(t-1)}} \log 3\mu + \frac{0.75 - 4\mu^{(t-1)}}{0.75 - \mu^{(t-1)}} \log (0.75 - 4\mu) \right) \\
+                        =\; &\alpha \frac{-0.5 \log 2 + \mu^{(t-1)} \log \mu}{0.25 + \mu^{(t-1)}} +
+                          (N-\alpha) \frac{3\mu^{(t-1)} \log 3\mu + (0.75 - 4\mu^{(t-1)}) \log (0.75 - 4\mu)}{0.75 - \mu^{(t-1)}} \\
+                        =\; &\frac{C + \alpha\mu^{(t-1)}\log\mu + (N-\alpha)3\mu^{(t-1)}\log\mu - 4\mu^{(t-1)}\log(0.75-4\mu)}{0.5^2 - (0.25 - \mu^{(t-1)})^2} \\
+                        =\; &\frac{C + (3N-2\alpha)\mu^{(t-1)}\log\mu - 4\mu^{(t-1)}\log(0.75-4\mu)}{0.5^2 - (0.25 - \mu^{(t-1)})^2}
+\end{align*}
+
+To maximize $Q$, we differentiate with respect to $\mu$ and equate to zero:
+\begin{align*}
+    \frac{(3N-2\alpha)\mu^{(t-1)}/\mu - 4\mu^{(t-1)}(-4)/(0.75-4\mu)}{0.5^2 - (0.25 - \mu^{(t-1)})^2} &= 0 \\
+    \frac{(3N-2\alpha)(0.75 - 4\mu) + 16\mu}{\mu(0.75 - 4\mu)} &= 0 \tag{$\mu^{(t-1)} > 0$} \\
+    (3N-2\alpha)(0.75 - 4\mu) + 16\mu &= 0 \tag{$\mu \ne 0, 4\mu \ne 0.75$} \\
+    \mu &= \frac{0.75(3N - 2\alpha)}{4(3N - 2\alpha - 4)}
+\end{align*}
+
+This implies that we can maximize $Q$ in a single iteration!?
 
 \section*{Problem 5 Solution}
 
@@ -430,6 +456,53 @@ state $j$ when emitting observation $o_t$ as the last among them.
 \end{enumerate}
 
 \section*{Problem 6 Solution}
+
 \subsection*{Part (a)}
+
+\begin{enumerate}[(i)]
+    \item If $w_1, w_2, \cdots w_n$ denote the words in an utterance $s$, and $w'_1,
+        w'_2, \cdots w'_m$ denote the words in the prediction $s'$, then we can define
+        the edit distance function, $\Psi$ as:
+        \begin{equation*}
+            \Psi(w_1, \cdots w_n; w'_1, \cdots w'_m) =
+            \begin{dcases}
+                \Psi(w_2, \cdots w_n; w'_2, \cdots w'_m)
+                & w_1 = w'_1 \\
+                \begin{split}
+                    1 + \min(\Psi(w_2, \cdots w_n; w'_1, \cdots w'_m), \\
+                         \Psi(w_1, \cdots w_n; w'_2, \cdots w'_m), \\
+                         \Psi(w_2, \cdots w_n; w'_2, \cdots w'_m))
+                \end{split}
+                & \rm otherwise
+            \end{dcases}
+        \end{equation*}
+        The three terms which are $\min$-ed indicate an addition, deletion,
+        and substitution respectively on the predicted sequence.
+    \item If $\operatorname{join}(w_1, w_2)$ indicate the joining of two words
+        to form a compound word, then the new recurrence relation can be
+        defined as:
+        \begin{equation*}
+            \Psi(w_1, \cdots w_n; w'_1, \cdots w'_m) =
+            \begin{dcases}
+                \Psi(w_2, \cdots w_n; w'_2, \cdots w'_m) & w_1 = w'_1 \\
+                1 + \Psi(w_2, \cdots w_n; w'_3, \cdots w'_m)
+                & w_1 = \operatorname{join}(w'_1, w'_2) \\
+                1 + \Psi(w_3, \cdots w_n; w'_2, \cdots w'_m)
+                & w'_1 = \operatorname{join}(w_1, w_2) \\
+                \begin{split}
+                    1 + \min(\Psi(w_2, \cdots w_n; w'_1, \cdots w'_m), \\
+                         \Psi(w_1, \cdots w_n; w'_2, \cdots w'_m), \\
+                         \Psi(w_2, \cdots w_n; w'_2, \cdots w'_m))
+                \end{split}
+                & \rm otherwise
+            \end{dcases}
+        \end{equation*}
+    \item While checking for equality, it can also be checked for accoustic
+        similarity and the associated cost can be discounted appropriately.
+\end{enumerate}
+
+\subsection*{Part (b)}
+
+(Will update if time permits.)
 
 \end{document}
