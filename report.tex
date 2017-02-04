@@ -246,22 +246,22 @@ Now, expanding $p_t(j, k)$ and $p_{t-1}(i, j)$,
 
 \textbf{Recursion:} For all $1 < t \le T$,
 \begin{align*}
-    v_{t-1, max} &= \max_{j=1}^N v_{t-1}(j) \\
-    bt_{t-1, max} &= \argmax_{j=1}^N v_{t-1}(j) % FIXME
+    v_{t-1, \max} &= \max_{j=1}^N v_{t-1}(j) \\
+    bt_{t-1, \max} &= \argmax_{j=1}^N v_{t-1}(j) % FIXME
 \end{align*}
 And for all $1 \le j \le N$,
 \begin{align*}
     v_t(j) &=
     \begin{dcases}
-        v_{t-1, max} \; q \; b_j(o_t)
-            & {\rm if~} bt_{t-1, max} \ne j {\rm~and~} v_{t-1, max} \; q > v_{t-1}(j) \; p \\
+        v_{t-1, \max} \; q \; b_j(o_t)
+            & {\rm if~} bt_{t-1, \max} \ne j {\rm~and~} v_{t-1, \max} \; q > v_{t-1}(j) \; p \\
         v_{t-1}(j) \; p \; b_j(o_t)
             & \textrm{otherwise}
     \end{dcases} \\
     bt_t(j) &=
     \begin{dcases}
-        bt_{t-1,max}
-            & {\rm if~} bt_{t-1, max} \ne j {\rm~and~} v_{t-1, max} \; q > v_{t-1}(j) \; p \\
+        bt_{t-1,\max}
+            & {\rm if~} bt_{t-1, \max} \ne j {\rm~and~} v_{t-1, \max} \; q > v_{t-1}(j) \; p \\
         j
             & \textrm{otherwise}
     \end{dcases}
@@ -278,11 +278,11 @@ And for all $1 \le j \le N$,
             bt_1(j) &= 0 \\
             c_1(j) &= 0
         \end{align*}
-    \item \textbf{Recursion:} For all $1 < t \le T$ and $1 \le j \le N$,\\
+    \item \textbf{Recursion:} For all $1 < t \le T$ and $1 \le j \le N$,
         If $c_{t-1}(j) < k$,
         \begin{align*}
-            v_t(j) &= \max_{i=1}^{N} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
-            bt_t(j) &= \argmax_{i=1}^{N} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
+            v_t(j) &= \max_{i=1}^{N} v_{t-1}(i) \; a_{ij} \; b_j(o_t) \\
+            bt_t(j) &= \argmax_{i=1}^{N} v_{t-1}(i) \; a_{ij} \; b_j(o_t) \\
             c_t(j) &=
             \begin{dcases}
                 c_{t-1}(j) + 1 & {\rm if~} bt_t(j) = j \\
@@ -291,24 +291,143 @@ And for all $1 \le j \le N$,
         \end{align*}
         otherwise,
         \begin{align*}
-            v_t(j) &= \max_{1 \le i \le N}^{i \ne j} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
-            bt_t(j) &= \argmax_{1 \le i \le N}^{i \ne j} v_{t-1}(i) \; a_{ij} \; b_j(ot) \\
+            v_t(j) &= \max_{1 \le i \le N}^{i \ne j} v_{t-1}(i) \; a_{ij} \; b_j(o_t) \\
+            bt_t(j) &= \argmax_{1 \le i \le N}^{i \ne j} v_{t-1}(i) \; a_{ij} \; b_j(o_t) \\
             c_t(j) &= 0
         \end{align*}
     \item \textbf{Termination:} (unchanged)
         \begin{align*}
-            \textrm{The best score:}&~~ P* = v_T(q_F) = \max_{i=1}^N v_T(i) \; a_{iF} \\
-            \textrm{The start of backtrace:}&~~ q_T* = bt_T(q_F) = \argmax_{i=1}^N v_T(i) \; a_{iF}
+            \textrm{The best score:}&~~ P* = \max_{i=1}^N v_T(i) \; a_{iF} \\
+            \textrm{The start of backtrace:}&~~ q_T* = \argmax_{i=1}^N v_T(i) \; a_{iF}
         \end{align*}
 \end{enumerate}
 
 % ------------------------------------------------
 
 \section*{Problem 4 Solution}
+
+We want to find a $\mu$ that maximizes the likelihood function:
+\[
+    \mathcal{L}(\mu | \mathcal{X}) = \Pr(\mathcal{X} | \mu)
+                                   = \prod_{x \in \mathcal{X}} \Pr(x; \mu)
+                                   = \prod_{x \in \mathcal{X}} \sum_{y \in \rm\bf Y} \Pr(x, y; \mu)
+\]
+where $\mathcal{X}$ is the set of observations (first letter of grade for each
+student), and $y \in \bf Y$ is an actual grade where $\mathbf{Y} = \{\rm AA, AB, BB, BC \}$.
+
+We know the probability distribution of $y$ in terms of $\mu$:
+\[
+    y \sim P_\mu =
+    \begin{dcases}
+        0.25 & y = \rm AA \\
+        \mu & y = \rm AB \\
+        3\mu & y = \rm BB \\
+        0.75 - 4\mu & y = \rm BC
+    \end{dcases}
+\]
+
+We can maximize $\mathcal{L}(\mu | \mathcal{X})$ using EM algorithm, by
+iteratively maximizing $Q(\mu, \mu^{(t-1)})$ which is the expectation of the
+log-likelihood of ``complete data'' (observed + hidden) over the hidden
+variable. That is, repeat (over $t$ with a randomly initialized $\mu^{(0)}$):
+\[
+    \mu^{(t)} = \argmax_{\mu} Q(\mu, \mu^{(t-1)})
+\]
+\begin{align*}
+    Q(\mu, \mu^{(t-1)}) &= E_{\mathcal{Y}} \left[ \log \mathcal{L}(\mu | \mathcal{Z})
+                               \middle| \mathcal{X}, \mu^{(t-1)}
+                               \right] \tag{$\mathcal{Z} =$ student-wise zip$(\mathcal{X, Y})$}\\
+                        &= E_{\mathcal{Y}} \left[ \log \Pr(\mathcal{Z} | \mu)
+                               \middle| \mathcal{X}, \mu^{(t-1)} \right] \\
+                        &= E_{\mathcal{Y}} \left[ \sum_{(x, y) \in \mathcal{Z}} \log \Pr(x, y| \mu)
+                               \middle| \mathcal{X}, \mu^{(t-1)} \right] \\
+                        &= \sum_{\mathcal{Y}} \Pr(\mathcal{Y} | \mathcal{X}, \mu^{(t-1)})
+                                              \sum_{(x, y) \in \mathcal{Z}} \log \Pr(x, y| \mu) \\
+                        &= \sum_{x \in \mathcal{X}} \sum_{y \in \bf Y} \Pr (y | x, \mu^{(t-1)})
+                                                        \log \Pr(x, y| \mu) \tag{Abracadabra!}
+\end{align*}
+Note that in the above expression, the only unknown variable is $\mu$.
+
 \subsection*{Part (a)}
 
+\[
+    \Pr(x, y | \mu) =
+    \begin{dcases}
+        0.25 & x = A, y = AA \\
+        \mu & x = A, y = AB \\
+        3\mu & x = B, y = BB \\
+        0.75 - 4\mu & x = B, y = BC \\
+        0 & \rm otherwise
+    \end{dcases}
+\]
+
+\[
+    \Pr(y | x, \mu^{(t-1)}) = \frac{\Pr(x, y | \mu^{(t-1)})}{\Pr(x | \mu^{(t-1)})}
+\]
+
+\[
+    \Pr(y | x, \mu^{(t-1)}) =
+    \begin{dcases}
+        \frac{0.25}{0.25 + \mu^{(t-1)}} & x = A, y = AA \\
+        \frac{\mu^{(t-1)}}{0.25 + \mu^{(t-1)}} & x = A, y = AB \\
+        \frac{3\mu^{(t-1)}}{0.75 - \mu^{(t-1)}} & x = B, y = BB \\
+        \frac{0.75 - 4\mu^{(t-1)}}{0.75 - \mu^{(t-1)}} & x = B, y = BC \\
+        0 & \rm otherwise
+    \end{dcases}
+\]
+
+\subsection*{Part (b)}
+
+?
+
 \section*{Problem 5 Solution}
+
 \subsection*{Part (a)}
+
+We add another variable $c_t(j)$ which is the number of observations emitted by
+state $j$ when emitting observation $o_t$ as the last among them.
+\begin{enumerate}
+    \item \textbf{Initialization:} For all $1 \le j \le N$,
+        \begin{align*}
+            v_1(j) &= a_{0j} \, L(j, 1) \, B(j, o_1) \\
+            bt_1(j) &= 0 \\
+            c_1(j) &= 1
+        \end{align*}
+    \item \textbf{Recursion:} For all $1 < t \le T$ and $1 \le j \le N$,
+        \begin{align*}
+            \ell_{t, \max} &= \min(t, \ell_{\max}) \\
+            v_t(j) &= \max_{\substack{1 \le i \le N \\ 1 \le \ell \le \ell_{t, \max}}} v_{t-\ell}(i) \;
+                          a_{ij} \, L(j, \ell) \, B(j, o_{t-\ell+1}, \cdots o_t) \\
+            bt_t(j) &= \argmax_{\substack{i \\ 1 \le i \le N \\ 1 \le \ell \le \ell_{t, \max}}} (\bullet) \\
+            c_t(j) &= \argmax_{\substack{\ell \\ 1 \le i \le N \\ 1 \le \ell \le \ell_{t, \max}}} (\bullet) \\
+        \end{align*}
+    \item \textbf{Termination:} (unchanged)
+        \begin{align*}
+            \textrm{The best score:}&~~ P* = \max_{i=1}^N v_T(i) \; a_{iF} \\
+            \textrm{The start of backtrace:}&~~ q_T* = \argmax_{i=1}^N v_T(i) \; a_{iF}
+        \end{align*}
+\end{enumerate}
+
+\subsection*{Part (b)}
+
+We add another variable $c_t(j)$ which is the number of observations emitted by
+state $j$ when emitting observation $o_t$ as the last among them.
+\begin{enumerate}
+    \item \textbf{Initialization:} For all $1 \le j \le N$,
+        \begin{align*}
+            \alpha_1(j) &= a_{0j} \, L(j, 1) \, B(j, o_1)
+        \end{align*}
+    \item \textbf{Recursion:} For all $1 < t \le T$ and $1 \le j \le N$,
+        \begin{align*}
+            \ell_{t, \max} &= \min(t, \ell_{\max}) \\
+            \alpha_t(j) &= \sum_{i=1}^N \sum_{\ell=1}^{\ell_{t, \max}} \alpha_{t-\ell}(i) \;
+                          a_{ij} \, L(j, \ell) \, B(j, o_{t-\ell+1}, \cdots o_t)
+        \end{align*}
+    \item \textbf{Termination:} (unchanged)
+        \begin{align*}
+            \Pr(O|\lambda) = \sum_{i=1}^N \alpha_T(i) \; a_{iF}
+        \end{align*}
+\end{enumerate}
 
 \section*{Problem 6 Solution}
 \subsection*{Part (a)}
